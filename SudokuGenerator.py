@@ -1,6 +1,6 @@
 import random
 
-from sudoku_matrix import SudokuMatrix
+from SudokuMatrix import SudokuMatrix
 
 
 class SudokuGenerator:

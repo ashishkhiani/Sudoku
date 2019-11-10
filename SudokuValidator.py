@@ -1,4 +1,4 @@
-from sudoku_matrix import SudokuMatrix
+from SudokuMatrix import SudokuMatrix
 
 
 def contains_duplicates(arr):
@@ -10,16 +10,16 @@ def contains_duplicates(arr):
 
 class SudokuValidator:
 
-    def __init__(self, matrix):
+    def __init__(self, sudoku_matrix):
         """
 
-        :type matrix: SudokuMatrix
+        :type sudoku_matrix: SudokuMatrix
         """
-        self.matrix = matrix
+        self.sudoku_matrix = sudoku_matrix
 
     def validate(self):
 
-        fully_filled = self.matrix.is_fully_filled()
+        fully_filled = self.sudoku_matrix.is_fully_filled()
         validated_rows = self._validate_rows()
         validated_columns = self._validate_columns()
         validated_boxes = self._validate_box()
@@ -30,24 +30,24 @@ class SudokuValidator:
         return fully_filled and validated_rows and validated_columns and validated_boxes
 
     def validate_completed(self):
-        return self.matrix.is_fully_filled()
+        return self.sudoku_matrix.is_fully_filled()
 
     def _validate_rows(self):
-        for row in self.matrix.get_rows():
+        for row in self.sudoku_matrix.get_rows():
             if contains_duplicates(row):
                 return False
 
         return True
 
     def _validate_columns(self):
-        for column in self.matrix.get_columns():
+        for column in self.sudoku_matrix.get_columns():
             if contains_duplicates(column):
                 return False
 
         return True
 
     def _validate_box(self):
-        for box in self.matrix.get_boxes():
+        for box in self.sudoku_matrix.get_boxes():
             if contains_duplicates(box):
                 return False
 
