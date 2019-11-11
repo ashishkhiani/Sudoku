@@ -1,11 +1,9 @@
 import random
 
-from SudokuMatrix import SudokuMatrix
-
 
 class SudokuGenerator:
 
-    def __init__(self, n, k):
+    def __init__(self, n, k, sudoku_matrix):
         """
         Initializes the Sudoku Board
         :param n: Rank of Sudoku puzzle
@@ -13,15 +11,11 @@ class SudokuGenerator:
         """
         self.n = n
         self.k = k
-        self.sudoku_matrix = SudokuMatrix(n)
+        self.sudoku_matrix = sudoku_matrix
 
-    def generate_sudoku_matrix(self):
-        """
-        Generates a Sudoku puzzle of rank n with k clues.
-        :return: An n^2 by n^2 board with k clues
-        """
+    def generate_sudoku_matrix(self, solver):
         self._fill_diagonal()
-        self._fill_remaining(0, self.n)
+        solver.solve()
         self._create_clues()
         return self.sudoku_matrix
 
@@ -48,66 +42,9 @@ class SudokuGenerator:
 
         return True
 
-    def _fill_remaining(self, i, j):
-
-        N = self.n ** 2
-        SRN = self.n
-
-        if j >= N and i < N - 1:
-            i = i + 1
-            j = 0
-
-        if i >= N and j >= N:
-            return True
-
-        if i < SRN:
-            if j < SRN:
-                j = SRN
-        elif i < N - SRN:
-            if j == (int(i / SRN) * SRN):
-                j = j + SRN
-        else:
-            if j == N - SRN:
-                i = i + 1
-                j = 0
-                if i >= N:
-                    return True
-
-        for num in range(1, N + 1):
-            if self._check_if_safe(i, j, num):
-                self.sudoku_matrix.set(i, j, num)
-
-                if self._fill_remaining(i, j + 1):
-                    return True
-
-                self.sudoku_matrix.make_cell_empty(i, j)
-
-        return False
-
-    def _check_if_safe(self, i, j, num):
-        return self._unused_in_row(i, num) and \
-               self._unused_in_column(j, num) and \
-               self._unused_in_box(i - i % self.n, j - j % self.n, num)
-
-    def _unused_in_row(self, i, num):
-        for j in range(self.n ** 2):
-            if self.sudoku_matrix.get(i, j) == num:
-                return False
-
-        return True
-
-    def _unused_in_column(self, j, num):
-        for i in range(self.n ** 2):
-            if self.sudoku_matrix.get(i, j) == num:
-                return False
-
-        return True
-
     def _create_clues(self):
         coordinates = [(x, y) for x in range(self.n ** 2) for y in range(self.n ** 2)]
         cells_to_remove = random.sample(coordinates, self.n ** 4 - self.k)
 
         for i, j in cells_to_remove:
             self.sudoku_matrix.make_cell_empty(i, j)
-
-

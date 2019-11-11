@@ -1,9 +1,15 @@
+from tabulate import tabulate
+
+
 class SudokuMatrix:
 
     def __init__(self, n):
         self.n = n
         self.sudoku_matrix = [[0 for _ in range(n ** 2)] for _ in range(n ** 2)]
         self.EMPTY_CELL = 0
+
+    def __str__(self):
+        return tabulate(self.get_rows(), tablefmt="fancy_grid")
 
     def set(self, row, column, value):
         self.sudoku_matrix[row][column] = value
