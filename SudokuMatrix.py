@@ -48,6 +48,10 @@ class SudokuMatrix:
         return boxes
 
     def get_box(self, row, column):
+        box_index = self.get_box_index(row, column)
+        return self.get_boxes()[box_index]
+
+    def get_box_index(self, row, column):
         indices = [(x % self.n, int(x / self.n)) for x in range(self.n ** 2)]
 
         xx = row % self.n
@@ -56,9 +60,7 @@ class SudokuMatrix:
         x = (row - xx) / self.n
         y = (column - yy) / self.n
 
-        box_index = indices.index((x, y))
-
-        return self.get_boxes()[box_index]
+        return indices.index((x, y))
 
     def get_empty_cells(self):
         empty_cells = []
