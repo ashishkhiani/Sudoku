@@ -1,3 +1,5 @@
+import sys
+
 from Node import Node, DancingNode, ColumnNode
 from SudokuMatrix import SudokuMatrix
 
@@ -83,9 +85,6 @@ class DancingLinks:
                 node.column_header = self._get_column_header(node.column_id)
                 node.column_header.size += 1
 
-        for node in nodes:
-            print(node)
-
     def _get_left(self, row, column):
         """
         Returns the node to the left of the node at (row, column)
@@ -137,6 +136,117 @@ class DancingLinks:
         return self.matrix[0][column]
 
 
+class ExactCoverSolver:
+
+    def __init__(self, exact_cover_matrix):
+        self.exact_cover_matrix = exact_cover_matrix
+        DancingLinks(exact_cover_matrix).create_dancing_links()
+        self.header = self.exact_cover_matrix[0][0]
+
+    def search(self, k, o):
+
+        if self.header.right == self.header:
+            return o
+
+        c = self._choose_column()
+        self._cover(c)
+
+        r = c.down
+        while r != c:
+            o[k] = r
+
+            j = r.right
+            while j != r:
+                # cover column header of j
+                self._cover(j.column_header)
+
+                # iterate to next right element
+                j = j.right
+
+            return self.search(k + 1, o)
+
+        #     r = o[k]
+        #     c = r.column_header
+        #
+        #     j = r.left
+        #     while j != r:
+        #         # uncover column header of j
+        #         self._uncover(j.column_header)
+        #
+        #         # iterate to next left element
+        #         j = j.left
+        #
+        #     # iterate to next down element
+        #     r = r.down
+        #
+        # self._uncover(c)
+        # return o
+
+    def _choose_column(self):
+        """
+        Returns the column with the smallest number of 1s.
+        """
+        current_node = self.header.right
+        min_size = sys.maxsize
+        column_selected = None
+
+        while current_node != self.header:
+            if current_node.size < min_size:
+                min_size = current_node.size
+                column_selected = current_node
+            current_node = current_node.right
+
+        return column_selected
+
+    @staticmethod
+    def _cover(c):
+        # remove column c from header list
+        c.right.left = c.left
+        c.left.right = c.right
+
+        i = c.down
+        while i != c:
+
+            j = i.right
+            while j != i:
+                # remove j from current row i
+                j.down.up = j.up
+                j.up.down = j.down
+
+                # decrement size of column that j refers to
+                j.column_header.size -= 1
+
+                # iterate to next right element
+                j = j.right
+
+            # iterate to next down element
+            i = i.down
+
+    @staticmethod
+    def _uncover(c):
+        i = c.up
+        while i != c:
+
+            j = i.left
+            while j != i:
+                # increment size of column that j refers to
+                j.column_header.size += 1
+
+                # add j back to current row i
+                j.down.up = j
+                j.up.down = j
+
+                # iterate to next left element
+                j = j.left
+
+            # iterate to next up element
+            i = i.up
+
+        # add column c to header list
+        c.right.left = c
+        c.left.right = c
+
+
 class SudokuExactCoverSolver:
 
     def __init__(self, n, sudoku_matrix):
@@ -145,13 +255,22 @@ class SudokuExactCoverSolver:
         """
         self.n = n
         self.sudoku_matrix = sudoku_matrix
-        self.exact_cover_matrix = self._create_exact_cover_matrix()
+        self.exact_cover_matrix, self.possibilities = self._create_exact_cover_matrix()
 
     def solve(self):
-        return
+        exact_cover_solver = ExactCoverSolver(self.exact_cover_matrix)
+        rows_to_select = []
+
+        solutions = exact_cover_solver.search(k=0, o=dict())
+
+        for solution in solutions.values():
+            rows_to_select.append(solution.row_id - 1)
+
+        for row_id in rows_to_select:
+            row, column, value = self.possibilities[row_id]
+            self.sudoku_matrix.set(row, column, value)
 
     def _create_exact_cover_matrix(self):
-        # TODO take into account the clues given to make matrix size smaller
         possibilities = self._create_possibilities()
         constraints = self._create_constraints()
         exact_cover_matrix = []
@@ -162,17 +281,18 @@ class SudokuExactCoverSolver:
                 m.append(self._handle_possibility_constraint_combination(possibility, constraint))
             exact_cover_matrix.append(m)
 
-        DancingLinks(exact_cover_matrix).create_dancing_links()
-
-        return exact_cover_matrix
+        return exact_cover_matrix, possibilities
 
     def _create_possibilities(self):
         possibilities = []
 
         for row in range(self.n ** 2):
             for column in range(self.n ** 2):
-                for i in range(1, self.n ** 2 + 1):
-                    possibilities.append((row, column, i))
+                if self.sudoku_matrix.is_empty_cell(row, column):
+                    for i in range(1, self.n ** 2 + 1):
+                        possibilities.append((row, column, i))
+                else:
+                    possibilities.append((row, column, self.sudoku_matrix.get(row, column)))
 
         return possibilities
 
