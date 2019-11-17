@@ -1,25 +1,38 @@
-import random
+import csv
+
+from SudokuMatrix import SudokuMatrix
 
 
 class SudokuGenerator:
 
-    def __init__(self, n, k, sudoku_matrix):
-        """
-        Initializes the Sudoku Board
-        :param n: Rank of Sudoku puzzle
-        :param k: Number of Clues to initialize puzzle with
-        """
-        self.n = n
-        self.k = k
-        self.sudoku_matrix = sudoku_matrix
+    @staticmethod
+    def read_sudoku_csv(num_puzzles):
+        sudoku_puzzles = []
+        with open('datasets/sudoku.csv') as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            next(csv_reader, None)  # skip the headers
 
-    def generate_sudoku_matrix(self, solver):
-        solver(self.n, self.sudoku_matrix).solve()
-        self._create_clues()
+            for i, row in enumerate(csv_reader):
+                sudoku_puzzles.append(row[0])
+                if len(sudoku_puzzles) == num_puzzles:
+                    break
 
-    def _create_clues(self):
-        coordinates = [(x, y) for x in range(self.n ** 2) for y in range(self.n ** 2)]
-        cells_to_remove = random.sample(coordinates, self.n ** 4 - self.k)
+        return sudoku_puzzles
 
-        for i, j in cells_to_remove:
-            self.sudoku_matrix.make_cell_empty(i, j)
+    @staticmethod
+    def convert_string_to_matrix(sudoku_string):
+        n = int(len(sudoku_string) ** (1 / 4))
+
+        sudoku_matrix = SudokuMatrix(n)
+
+        c = 0
+        for i in range(n ** 2):
+            for j in range(n ** 2):
+                sudoku_matrix.set(i, j, int(sudoku_string[c]))
+                c += 1
+
+        return sudoku_matrix
+
+    def generate_puzzles(self, num_puzzles):
+        puzzles = self.read_sudoku_csv(num_puzzles)
+        return [self.convert_string_to_matrix(puzzle) for puzzle in puzzles]

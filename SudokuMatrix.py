@@ -11,6 +11,9 @@ class SudokuMatrix:
     def __str__(self):
         return tabulate(self.get_rows(), tablefmt="fancy_grid")
 
+    def get_rank(self):
+        return self.n
+
     def set(self, row, column, value):
         self.sudoku_matrix[row][column] = value
 

@@ -1,32 +1,38 @@
+import time
+
 from SudokuBackTrackingSolver import SudokuBackTrackingSolver
 from SudokuExactCoverSolver import SudokuExactCoverSolver
 from SudokuGenerator import SudokuGenerator
-from SudokuMatrix import SudokuMatrix
 from SudokuValidator import SudokuValidator
 
 
-def main(n, k, solver):
-    # Initialize Sudoku Matrix
-    sudoku_matrix = SudokuMatrix(n)
-
-    # Generate Sudoku Matrix
-    sudoku_generator = SudokuGenerator(n, k, sudoku_matrix)
-    sudoku_generator.generate_sudoku_matrix(solver)
-    print(sudoku_matrix)
+def main(solver):
+    # Generate Sudoku Matrices
+    sudoku_generator = SudokuGenerator()
+    sudoku_matrices = sudoku_generator.generate_puzzles(num_puzzles=10)
 
     # Solve Sudoku Puzzle
-    solve_puzzle(s=solver(n, sudoku_matrix))
-    print(sudoku_matrix)
+    for sudoku_matrix in sudoku_matrices:
+        s = solver(sudoku_matrix)
+        solve_puzzle(s)
 
-    # Validate Sudoku Solution
-    sudoku_validator = SudokuValidator(sudoku_matrix)
-    sudoku_validator.validate()
+        # Validate Sudoku Solution
+        sudoku_validator = SudokuValidator(sudoku_matrix)
+        is_valid = sudoku_validator.validate()
+        assert is_valid
 
 
 def solve_puzzle(s):
-    # TODO start measuring
+    start = time.time()
     s.solve()
-    # TODO stop measuring
+    end = time.time()
+    print(end - start)
 
 
-main(n=3, k=17, solver=SudokuExactCoverSolver)
+print('Backtracking Solver')
+main(solver=SudokuBackTrackingSolver)
+print('------------------')
+
+print('Exact Cover Solver')
+main(solver=SudokuExactCoverSolver)
+print('------------------')

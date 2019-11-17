@@ -163,24 +163,24 @@ class ExactCoverSolver:
                 # iterate to next right element
                 j = j.right
 
-            return self.search(k + 1, o)
+            self.search(k + 1, o)
 
-        #     r = o[k]
-        #     c = r.column_header
-        #
-        #     j = r.left
-        #     while j != r:
-        #         # uncover column header of j
-        #         self._uncover(j.column_header)
-        #
-        #         # iterate to next left element
-        #         j = j.left
-        #
-        #     # iterate to next down element
-        #     r = r.down
-        #
-        # self._uncover(c)
-        # return o
+            r = o[k]
+            c = r.column_header
+
+            j = r.left
+            while j != r:
+                # uncover column header of j
+                self._uncover(j.column_header)
+
+                # iterate to next left element
+                j = j.left
+
+            # iterate to next down element
+            r = r.down
+
+        self._uncover(c)
+        return o
 
     def _choose_column(self):
         """
@@ -249,19 +249,19 @@ class ExactCoverSolver:
 
 class SudokuExactCoverSolver:
 
-    def __init__(self, n, sudoku_matrix):
+    def __init__(self, sudoku_matrix):
         """
         :type sudoku_matrix: SudokuMatrix
         """
-        self.n = n
         self.sudoku_matrix = sudoku_matrix
+        self.n = sudoku_matrix.get_rank()
         self.exact_cover_matrix, self.possibilities = self._create_exact_cover_matrix()
+        self.exact_cover_solver = ExactCoverSolver(self.exact_cover_matrix)
 
     def solve(self):
-        exact_cover_solver = ExactCoverSolver(self.exact_cover_matrix)
         rows_to_select = []
 
-        solutions = exact_cover_solver.search(k=0, o=dict())
+        solutions = self.exact_cover_solver.search(k=0, o=dict())
 
         for solution in solutions.values():
             rows_to_select.append(solution.row_id - 1)

@@ -24,8 +24,8 @@ class SudokuValidator:
         validated_columns = self._validate_columns()
         validated_boxes = self._validate_box()
 
-        print(f'fully_filled={fully_filled}, validated_rows={validated_rows}, validated_columns={validated_columns}, '
-              f'validated_boxes={validated_boxes}')
+        # print(f'fully_filled={fully_filled}, validated_rows={validated_rows}, validated_columns={validated_columns}, '
+        #       f'validated_boxes={validated_boxes}')
 
         return fully_filled and validated_rows and validated_columns and validated_boxes
 

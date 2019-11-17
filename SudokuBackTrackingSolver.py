@@ -5,13 +5,12 @@ from SudokuMatrix import SudokuMatrix
 
 class SudokuBackTrackingSolver:
 
-    def __init__(self, n, sudoku_matrix):
+    def __init__(self, sudoku_matrix):
         """
-        :type n: Rank
         :type sudoku_matrix: SudokuMatrix
         """
-        self.n = n
         self.sudoku_matrix = sudoku_matrix
+        self.n = sudoku_matrix.get_rank()
 
     def solve(self):
 
