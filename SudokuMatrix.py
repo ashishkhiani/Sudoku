@@ -14,6 +14,16 @@ class SudokuMatrix:
     def get_rank(self):
         return self.n
 
+    def get_num_clues(self):
+        k = 0
+
+        for row in range(self.n ** 2):
+            for column in range(self.n ** 2):
+                if not self.is_empty_cell(row, column):
+                    k += 1
+
+        return k
+
     def set(self, row, column, value):
         self.sudoku_matrix[row][column] = value
 
@@ -75,8 +85,13 @@ class SudokuMatrix:
 
         return empty_cells
 
-    def is_fully_filled(self):
-        return len(self.get_empty_cells()) == 0
+    def has_empty_cells(self):
+        for row in range(self.n ** 2):
+            for column in range(self.n ** 2):
+                if self.is_empty_cell(row, column):
+                    return True
+
+        return False
 
     def is_empty_cell(self, row, column):
         return self.get(row, column) == self.EMPTY_CELL

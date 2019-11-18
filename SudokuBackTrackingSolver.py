@@ -14,7 +14,7 @@ class SudokuBackTrackingSolver:
 
     def solve(self):
 
-        if self.sudoku_matrix.is_fully_filled():
+        if not self.sudoku_matrix.has_empty_cells():
             return True
 
         current_row, current_column = self.sudoku_matrix.get_empty_cells()[0]
