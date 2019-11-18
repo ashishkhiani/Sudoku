@@ -1,5 +1,3 @@
-import random
-
 from SudokuMatrix import SudokuMatrix
 
 
@@ -18,11 +16,10 @@ class SudokuBackTrackingSolver:
             return True
 
         current_row, current_column = self.sudoku_matrix.get_empty_cells()[0]
-        random_sample = random.sample(range(1, self.n ** 2 + 1), self.n ** 2)
 
-        for random_value in random_sample:
+        for i in range(1, self.n ** 2 + 1):
 
-            if self.sudoku_matrix.set_if_valid(current_row, current_column, random_value):
+            if self.sudoku_matrix.set_if_valid(current_row, current_column, i):
                 if self.solve():
                     return True
 

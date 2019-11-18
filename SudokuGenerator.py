@@ -5,10 +5,14 @@ from SudokuMatrix import SudokuMatrix
 
 class SudokuGenerator:
 
+    def generate_puzzles(self, num_puzzles):
+        puzzles = self._read_sudoku_csv(num_puzzles)
+        return [self._convert_string_to_matrix(puzzle) for puzzle in puzzles]
+
     @staticmethod
-    def read_sudoku_csv(num_puzzles):
+    def _read_sudoku_csv(num_puzzles):
         sudoku_puzzles = []
-        with open('datasets/sudoku.csv') as csv_file:
+        with open(f'datasets/sudoku.csv') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             next(csv_reader, None)  # skip the headers
 
@@ -20,7 +24,7 @@ class SudokuGenerator:
         return sudoku_puzzles
 
     @staticmethod
-    def convert_string_to_matrix(sudoku_string):
+    def _convert_string_to_matrix(sudoku_string):
         n = int(len(sudoku_string) ** (1 / 4))
 
         sudoku_matrix = SudokuMatrix(n)
@@ -28,11 +32,10 @@ class SudokuGenerator:
         c = 0
         for i in range(n ** 2):
             for j in range(n ** 2):
-                sudoku_matrix.set(i, j, int(sudoku_string[c]))
+                if sudoku_string[c] == '.':
+                    sudoku_matrix.set(i, j, 0)
+                else:
+                    sudoku_matrix.set(i, j, int(sudoku_string[c]))
                 c += 1
 
         return sudoku_matrix
-
-    def generate_puzzles(self, num_puzzles):
-        puzzles = self.read_sudoku_csv(num_puzzles)
-        return [self.convert_string_to_matrix(puzzle) for puzzle in puzzles]
