@@ -259,15 +259,10 @@ class SudokuExactCoverSolver:
         self.exact_cover_solver = ExactCoverSolver(self.exact_cover_matrix)
 
     def solve(self):
-        rows_to_select = []
-
         solutions = self.exact_cover_solver.search(k=0, o=dict())
 
         for solution in solutions.values():
-            rows_to_select.append(solution.row_id - 1)
-
-        for row_id in rows_to_select:
-            row, column, value = self.possibilities[row_id]
+            row, column, value = self.possibilities[solution.row_id - 1]
             self.sudoku_matrix.set(row, column, value)
 
     def _create_exact_cover_matrix(self):
