@@ -1,3 +1,3 @@
 ## Sudoku
 
-An algorithm to generate and solve generalized Sudoku Puzzles. 
+An algorithm to solve generalized Sudoku Puzzles. 
