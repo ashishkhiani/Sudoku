@@ -1,4 +1,4 @@
-from SudokuMatrix import SudokuMatrix
+from app.SudokuMatrix import SudokuMatrix
 
 
 def contains_duplicates(arr):

@@ -4,41 +4,13 @@ from tabulate import tabulate
 class SudokuMatrix:
 
     def __init__(self, n):
-        self.n = n
+        self.n = n  # rank
+        self.k = 0  # num clues
         self.sudoku_matrix = [[0 for _ in range(n ** 2)] for _ in range(n ** 2)]
         self.EMPTY_CELL = 0
 
     def __str__(self):
         return tabulate(self.get_rows(), tablefmt="fancy_grid")
-
-    def get_rank(self):
-        return self.n
-
-    def get_num_clues(self):
-        k = 0
-
-        for row in range(self.n ** 2):
-            for column in range(self.n ** 2):
-                if not self.is_empty_cell(row, column):
-                    k += 1
-
-        return k
-
-    def set(self, row, column, value):
-        self.sudoku_matrix[row][column] = value
-
-    def set_if_valid(self, row, column, value):
-        if value in self.get_row(row):
-            return False
-
-        if value in self.get_column(column):
-            return False
-
-        if value in self.get_box(row, column):
-            return False
-
-        self.set(row, column, value)
-        return True
 
     def get(self, row, column):
         return self.sudoku_matrix[row][column]
@@ -75,6 +47,12 @@ class SudokuMatrix:
 
         return indices.index((x, y))
 
+    def get_rank(self):
+        return self.n
+
+    def get_num_clues(self):
+        return self.k
+
     def get_empty_cells(self):
         empty_cells = []
 
@@ -96,5 +74,26 @@ class SudokuMatrix:
     def is_empty_cell(self, row, column):
         return self.get(row, column) == self.EMPTY_CELL
 
+    def set(self, row, column, value):
+        self.sudoku_matrix[row][column] = value
+        self.increment_num_clues()
+
+    def set_if_valid(self, row, column, value):
+        if value in self.get_row(row):
+            return False
+
+        if value in self.get_column(column):
+            return False
+
+        if value in self.get_box(row, column):
+            return False
+
+        self.set(row, column, value)
+        return True
+
     def make_cell_empty(self, row, column):
         self.set(row, column, self.EMPTY_CELL)
+
+    def increment_num_clues(self):
+        self.k += 1
+
