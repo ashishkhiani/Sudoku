@@ -1,7 +1,7 @@
 import sys
 
-from Node import Node, DancingNode, ColumnNode
-from SudokuMatrix import SudokuMatrix
+from app.Node import Node, DancingNode, ColumnNode
+from app.SudokuMatrix import SudokuMatrix
 
 
 class DancingLinks:
@@ -142,6 +142,7 @@ class ExactCoverSolver:
         self.exact_cover_matrix = exact_cover_matrix
         DancingLinks(exact_cover_matrix).create_dancing_links()
         self.header = self.exact_cover_matrix[0][0]
+        self.num_updates = 0
 
     def search(self, k, o):
 
@@ -182,6 +183,9 @@ class ExactCoverSolver:
         self._uncover(c)
         return o
 
+    def get_num_updates(self):
+        return self.num_updates
+
     def _choose_column(self):
         """
         Returns the column with the smallest number of 1s.
@@ -198,11 +202,9 @@ class ExactCoverSolver:
 
         return column_selected
 
-    @staticmethod
-    def _cover(c):
+    def _cover(self, c):
         # remove column c from header list
-        c.right.left = c.left
-        c.left.right = c.right
+        self._unlinkLR(c)
 
         i = c.down
         while i != c:
@@ -210,8 +212,7 @@ class ExactCoverSolver:
             j = i.right
             while j != i:
                 # remove j from current row i
-                j.down.up = j.up
-                j.up.down = j.down
+                self._unlinkUD(j)
 
                 # decrement size of column that j refers to
                 j.column_header.size -= 1
@@ -222,8 +223,7 @@ class ExactCoverSolver:
             # iterate to next down element
             i = i.down
 
-    @staticmethod
-    def _uncover(c):
+    def _uncover(self, c):
         i = c.up
         while i != c:
 
@@ -233,8 +233,7 @@ class ExactCoverSolver:
                 j.column_header.size += 1
 
                 # add j back to current row i
-                j.down.up = j
-                j.up.down = j
+                self._relinkUD(j)
 
                 # iterate to next left element
                 j = j.left
@@ -243,8 +242,27 @@ class ExactCoverSolver:
             i = i.up
 
         # add column c to header list
-        c.right.left = c
-        c.left.right = c
+        self._relinkLR(c)
+
+    def _unlinkUD(self, x):
+        x.down.up = x.up
+        x.up.down = x.down
+        self.num_updates += 1
+
+    def _relinkUD(self, x):
+        x.down.up = x
+        x.up.down = x
+        self.num_updates += 1
+
+    def _unlinkLR(self, x):
+        x.right.left = x.left
+        x.left.right = x.right
+        self.num_updates += 1
+
+    def _relinkLR(self, x):
+        x.right.left = x
+        x.left.right = x
+        self.num_updates += 1
 
 
 class SudokuExactCoverSolver:
@@ -263,7 +281,11 @@ class SudokuExactCoverSolver:
 
         for solution in solutions.values():
             row, column, value = self.possibilities[solution.row_id - 1]
-            self.sudoku_matrix.set(row, column, value)
+            if self.sudoku_matrix.is_empty_cell(row, column):
+                self.sudoku_matrix.set(row, column, value)
+
+    def get_num_updates(self):
+        return self.exact_cover_solver.get_num_updates()
 
     def _create_exact_cover_matrix(self):
         possibilities = self._create_possibilities()
