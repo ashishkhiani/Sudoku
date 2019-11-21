@@ -1,4 +1,4 @@
-from SudokuMatrix import SudokuMatrix
+from app.SudokuMatrix import SudokuMatrix
 
 
 class SudokuBackTrackingSolver:
@@ -9,6 +9,7 @@ class SudokuBackTrackingSolver:
         """
         self.sudoku_matrix = sudoku_matrix
         self.n = sudoku_matrix.get_rank()
+        self.num_backtracks = 0  # counter used to measure performance of algorithm
 
     def solve(self):
 
@@ -23,6 +24,11 @@ class SudokuBackTrackingSolver:
                 if self.solve():
                     return True
 
+                # if we reached here, we have to backtrack
                 self.sudoku_matrix.make_cell_empty(current_row, current_column)
+                self.num_backtracks += 1
 
         return False
+
+    def get_num_updates(self):
+        return self.num_backtracks
