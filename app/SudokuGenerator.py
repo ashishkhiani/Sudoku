@@ -27,16 +27,12 @@ class SudokuGenerator:
 
         return sudoku_puzzles
 
-    @staticmethod
-    def _convert_string_to_matrix(sudoku_string):
-        m = int(len(sudoku_string) / 2)
-        n = int(m ** (1 / 4))
-
-        sudoku_matrix = SudokuMatrix(n)
+    def _convert_string_to_matrix(self, sudoku_string):
+        sudoku_matrix = SudokuMatrix(self.n)
 
         c = 0
-        for i in range(n ** 2):
-            for j in range(n ** 2):
+        for i in range(self.n ** 2):
+            for j in range(self.n ** 2):
                 if sudoku_string[c] == '.':
                     sudoku_matrix.set(i, j, 0)
                 else:

@@ -7,7 +7,24 @@ from app.SudokuGenerator import SudokuGenerator
 from app.SudokuValidator import SudokuValidator
 
 
-def main(solver, n, num_puzzles=None, csv_file=None):
+def run_exact_cover_solver():
+    main(
+        solver=SudokuExactCoverSolver,
+        n=3,
+        num_puzzles=1
+    )
+
+
+def run_backtracking_solver():
+    main(
+        solver=SudokuBackTrackingSolver,
+        n=3,
+        num_puzzles=10,
+        write_to_csv=True
+    )
+
+
+def main(solver, n, num_puzzles=None, write_to_csv=False):
     print('------------------')
     print(f'{solver.__name__}')
     print('------------------')
@@ -23,8 +40,8 @@ def main(solver, n, num_puzzles=None, csv_file=None):
         is_valid = sudoku_validator.validate()
         results.append((num_updates, time_taken, is_valid))
 
-    if csv_file:
-        write_data_to_csv(results, csv_file)
+    if write_to_csv:
+        write_data_to_csv(results, f'output/sudoku_rank_{n}_{solver.__name__}.csv')
     else:
         [print(r) for r in results]
 
@@ -47,8 +64,4 @@ def write_data_to_csv(results, csv_file):
         [writer.writerow([r for r in result]) for result in results]
 
 
-main(
-    solver=SudokuExactCoverSolver,
-    n=3,
-    num_puzzles=1
-)
+run_backtracking_solver()
