@@ -66,4 +66,5 @@ def write_data_to_csv(results, csv_file):
         [writer.writerow([r for r in result]) for result in results]
 
 
+print('starting')
 run_exact_cover_solver()
