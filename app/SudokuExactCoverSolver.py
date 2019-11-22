@@ -144,11 +144,13 @@ class ExactCoverSolver:
         DancingLinks(exact_cover_matrix).create_dancing_links()
         self.header = self.exact_cover_matrix[0][0]
         self.num_updates = 0
+        self.answer = []
 
     def search(self, k, o):
 
         if self.header.right == self.header:
-            return o
+            self.answer.append(o.copy())
+            return
 
         c = self._choose_column()
         self._cover(c)
@@ -161,17 +163,20 @@ class ExactCoverSolver:
 
             self.search(k + 1, o)
 
-            r = o[k]
+            r = o.pop(k, None)
             c = r.column_header
 
             for j in LeftIterable(r):
                 self._uncover(j.column_header)
 
         self._uncover(c)
-        return o
+        return
 
     def get_num_updates(self):
         return self.num_updates
+
+    def get_answer(self):
+        return self.answer
 
     def _choose_column(self):
         """
@@ -236,9 +241,10 @@ class SudokuExactCoverSolver:
         self.exact_cover_solver = ExactCoverSolver(self.exact_cover_matrix)
 
     def solve(self):
-        solutions = self.exact_cover_solver.search(k=0, o=dict())
+        self.exact_cover_solver.search(k=0, o=dict())
+        solutions = self.exact_cover_solver.get_answer()
 
-        for solution in solutions.values():
+        for solution in solutions[0].values():
             row, column, value = self.possibilities[solution.row_id - 1]
             if self.sudoku_matrix.is_empty_cell(row, column):
                 self.sudoku_matrix.set(row, column, value)

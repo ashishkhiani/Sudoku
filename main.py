@@ -10,8 +10,8 @@ from app.SudokuValidator import SudokuValidator
 def run_exact_cover_solver():
     main(
         solver=SudokuExactCoverSolver,
-        n=3,
-        num_puzzles=10
+        n=4,
+        num_puzzles=1
     )
 
 
