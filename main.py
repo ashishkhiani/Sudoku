@@ -1,20 +1,21 @@
 import csv
 import time
 
+from app.SudokuBackTrackingSolver import SudokuBackTrackingSolver
 from app.SudokuExactCoverSolver import SudokuExactCoverSolver
 from app.SudokuGenerator import SudokuGenerator
 from app.SudokuValidator import SudokuValidator
 
 
-def main(solver, n, csv_file=None):
+def main(solver, n, num_puzzles=None, csv_file=None):
     print('------------------')
-    print(f'{solver.__name__} Solver')
+    print(f'{solver.__name__}')
     print('------------------')
 
     results = [('num_updates', 'time_taken', 'is_valid')]
 
     sudoku_generator = SudokuGenerator(n)
-    sudoku_matrices = sudoku_generator.generate_puzzles()
+    sudoku_matrices = sudoku_generator.generate_puzzles(num_puzzles)
 
     for sudoku_matrix in sudoku_matrices:
         num_updates, time_taken = solve_puzzle(solver, sudoku_matrix)
@@ -31,8 +32,9 @@ def main(solver, n, csv_file=None):
 
 
 def solve_puzzle(solver, sudoku_matrix):
-    start = time.time()
     s = solver(sudoku_matrix)
+
+    start = time.time()
     s.solve()
     end = time.time()
     num_updates = s.get_num_updates()
@@ -47,5 +49,6 @@ def write_data_to_csv(results, csv_file):
 
 main(
     solver=SudokuExactCoverSolver,
-    n=3
+    n=3,
+    num_puzzles=1
 )
