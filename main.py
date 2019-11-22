@@ -11,7 +11,7 @@ def run_exact_cover_solver():
     main(
         solver=SudokuExactCoverSolver,
         n=3,
-        num_puzzles=1
+        num_puzzles=100
     )
 
 
@@ -33,6 +33,7 @@ def main(solver, n, num_puzzles=None, write_to_csv=False):
 
     sudoku_generator = SudokuGenerator(n)
     sudoku_matrices = sudoku_generator.generate_puzzles(num_puzzles)
+    # sudoku_matrices = sudoku_generator.generate_puzzle_from_id(1001)
 
     for sudoku_matrix in sudoku_matrices:
         num_updates, time_taken = solve_puzzle(solver, sudoku_matrix)
@@ -64,4 +65,4 @@ def write_data_to_csv(results, csv_file):
         [writer.writerow([r for r in result]) for result in results]
 
 
-run_backtracking_solver()
+run_exact_cover_solver()

@@ -13,6 +13,13 @@ class SudokuGenerator:
         puzzles = self._read_sudoku_csv(num_puzzles)
         return [self._convert_string_to_matrix(puzzle) for puzzle in puzzles]
 
+    def generate_puzzle_from_id(self, i):
+        with open(self.csv_file) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            sudoku_puzzle = list(csv_reader)[i][0]
+
+        return [self._convert_string_to_matrix(sudoku_puzzle)]
+
     def _read_sudoku_csv(self, num_puzzles=None):
         sudoku_puzzles = []
         with open(self.csv_file) as csv_file:

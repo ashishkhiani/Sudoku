@@ -1,5 +1,6 @@
 import sys
 
+from app.Iterator import DownIterable, RightIterable, LeftIterable, UpIterable
 from app.Node import Node, DancingNode, ColumnNode
 from app.SudokuMatrix import SudokuMatrix
 
@@ -152,33 +153,19 @@ class ExactCoverSolver:
         c = self._choose_column()
         self._cover(c)
 
-        r = c.down
-        while r != c:
+        for r in DownIterable(c):
             o[k] = r
 
-            j = r.right
-            while j != r:
-                # cover column header of j
+            for j in RightIterable(r):
                 self._cover(j.column_header)
-
-                # iterate to next right element
-                j = j.right
 
             self.search(k + 1, o)
 
             r = o[k]
             c = r.column_header
 
-            j = r.left
-            while j != r:
-                # uncover column header of j
+            for j in LeftIterable(r):
                 self._uncover(j.column_header)
-
-                # iterate to next left element
-                j = j.left
-
-            # iterate to next down element
-            r = r.down
 
         self._uncover(c)
         return o
@@ -190,58 +177,30 @@ class ExactCoverSolver:
         """
         Returns the column with the smallest number of 1s.
         """
-        current_node = self.header.right
         min_size = sys.maxsize
         column_selected = None
 
-        while current_node != self.header:
-            if current_node.size < min_size:
-                min_size = current_node.size
-                column_selected = current_node
-            current_node = current_node.right
+        for node in RightIterable(self.header):
+            if node.size < min_size:
+                min_size = node.size
+                column_selected = node
 
         return column_selected
 
     def _cover(self, c):
-        # remove column c from header list
         self._unlinkLR(c)
 
-        i = c.down
-        while i != c:
-
-            j = i.right
-            while j != i:
-                # remove j from current row i
+        for i in DownIterable(c):
+            for j in RightIterable(i):
                 self._unlinkUD(j)
-
-                # decrement size of column that j refers to
                 j.column_header.size -= 1
 
-                # iterate to next right element
-                j = j.right
-
-            # iterate to next down element
-            i = i.down
-
     def _uncover(self, c):
-        i = c.up
-        while i != c:
-
-            j = i.left
-            while j != i:
-                # increment size of column that j refers to
+        for i in UpIterable(c):
+            for j in LeftIterable(i):
                 j.column_header.size += 1
-
-                # add j back to current row i
                 self._relinkUD(j)
 
-                # iterate to next left element
-                j = j.left
-
-            # iterate to next up element
-            i = i.up
-
-        # add column c to header list
         self._relinkLR(c)
 
     def _unlinkUD(self, x):
