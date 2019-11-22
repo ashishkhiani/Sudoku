@@ -67,4 +67,4 @@ def write_data_to_csv(results, csv_file):
 
 
 print('starting')
-# run_exact_cover_solver()
+run_exact_cover_solver()
