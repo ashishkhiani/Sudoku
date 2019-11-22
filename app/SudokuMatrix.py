@@ -76,7 +76,9 @@ class SudokuMatrix:
 
     def set(self, row, column, value):
         self.sudoku_matrix[row][column] = value
-        self.increment_num_clues()
+
+        if value != self.EMPTY_CELL:
+            self.increment_num_clues()
 
     def set_if_valid(self, row, column, value):
         if value in self.get_row(row):

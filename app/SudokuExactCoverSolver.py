@@ -1,7 +1,7 @@
 import sys
 
 from app.Iterator import DownIterable, RightIterable, LeftIterable, UpIterable
-from app.Node import Node, DancingNode, ColumnNode
+from app.Node import DancingNode, ColumnNode
 from app.SudokuMatrix import SudokuMatrix
 
 
@@ -92,7 +92,7 @@ class DancingLinks:
         """
         j = (column - 1) % len(self.matrix[row])
 
-        while not isinstance(self.matrix[row][j], Node):
+        while self.matrix[row][j] == 0:
             j = (j - 1) % len(self.matrix[row])
 
         return self.matrix[row][j]
@@ -103,7 +103,7 @@ class DancingLinks:
         """
         j = (column + 1) % len(self.matrix[row])
 
-        while not isinstance(self.matrix[row][j], Node):
+        while self.matrix[row][j] == 0:
             j = (j + 1) % len(self.matrix[row])
 
         return self.matrix[row][j]
@@ -114,7 +114,7 @@ class DancingLinks:
         """
         i = (row - 1) % len(self.matrix)
 
-        while not isinstance(self.matrix[i][column], Node):
+        while self.matrix[i][column] == 0:
             i = (i - 1) % len(self.matrix)
 
         return self.matrix[i][column]
@@ -125,7 +125,7 @@ class DancingLinks:
         """
         i = (row + 1) % len(self.matrix)
 
-        while not isinstance(self.matrix[i][column], Node):
+        while self.matrix[i][column] == 0:
             i = (i + 1) % len(self.matrix)
 
         return self.matrix[i][column]
@@ -180,10 +180,10 @@ class ExactCoverSolver:
         min_size = sys.maxsize
         column_selected = None
 
-        for node in RightIterable(self.header):
-            if node.size < min_size:
-                min_size = node.size
-                column_selected = node
+        for c in RightIterable(self.header):
+            if c.size < min_size:
+                min_size = c.size
+                column_selected = c
 
         return column_selected
 

@@ -11,7 +11,7 @@ def run_exact_cover_solver():
     main(
         solver=SudokuExactCoverSolver,
         n=3,
-        num_puzzles=100
+        num_puzzles=10
     )
 
 
