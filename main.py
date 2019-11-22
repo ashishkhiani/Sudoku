@@ -12,7 +12,7 @@ def run_exact_cover_solver():
         main(
             solver=SudokuExactCoverSolver,
             n=n,
-            write_to_csv=True,
+            write_to_csv=True
         )
 
 
@@ -66,5 +66,4 @@ def write_data_to_csv(results, csv_file):
         [writer.writerow([r for r in result]) for result in results]
 
 
-# run_exact_cover_solver()
-print('works')
+run_exact_cover_solver()
