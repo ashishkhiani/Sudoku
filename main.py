@@ -8,7 +8,7 @@ from app.SudokuValidator import SudokuValidator
 
 
 def run_exact_cover_solver():
-    for n in range(3, 10):
+    for n in range(6, 10):
         main(
             solver=SudokuExactCoverSolver,
             n=n,
@@ -66,5 +66,5 @@ def write_data_to_csv(results, csv_file):
         [writer.writerow([r for r in result]) for result in results]
 
 
-print('starting')
+print('starting from 6')
 run_exact_cover_solver()
