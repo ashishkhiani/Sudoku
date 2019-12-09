@@ -8,7 +8,8 @@ from app.SudokuValidator import SudokuValidator
 
 
 def run_exact_cover_solver():
-    for n in range(6, 10):
+    for n in range(3, 6):
+        print(f'n={n}')
         main(
             solver=SudokuExactCoverSolver,
             n=n,
@@ -17,12 +18,13 @@ def run_exact_cover_solver():
 
 
 def run_backtracking_solver():
-    main(
-        solver=SudokuBackTrackingSolver,
-        n=3,
-        num_puzzles=10,
-        write_to_csv=True
-    )
+    for n in range(3, 6):
+        print(f'n={n}')
+        main(
+            solver=SudokuBackTrackingSolver,
+            n=n,
+            write_to_csv=True
+        )
 
 
 def main(solver, n, num_puzzles=None, write_to_csv=False):
@@ -64,7 +66,3 @@ def write_data_to_csv(results, csv_file):
     with open(csv_file, 'w') as csv_file:
         writer = csv.writer(csv_file)
         [writer.writerow([r for r in result]) for result in results]
-
-
-print('starting from 6')
-run_exact_cover_solver()

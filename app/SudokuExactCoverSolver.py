@@ -272,7 +272,8 @@ class SudokuExactCoverSolver:
             for column in range(self.n ** 2):
                 if self.sudoku_matrix.is_empty_cell(row, column):
                     for i in range(1, self.n ** 2 + 1):
-                        possibilities.append((row, column, i))
+                        if self.sudoku_matrix.is_valid(row, column, i):
+                            possibilities.append((row, column, i))
                 else:
                     possibilities.append((row, column, self.sudoku_matrix.get(row, column)))
 

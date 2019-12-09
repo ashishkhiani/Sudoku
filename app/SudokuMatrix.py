@@ -81,6 +81,19 @@ class SudokuMatrix:
             self.increment_num_clues()
 
     def set_if_valid(self, row, column, value):
+        if self.is_valid(row, column, value):
+            self.set(row, column, value)
+            return True
+
+        return False
+
+    def make_cell_empty(self, row, column):
+        self.set(row, column, self.EMPTY_CELL)
+
+    def increment_num_clues(self):
+        self.k += 1
+
+    def is_valid(self, row, column, value):
         if value in self.get_row(row):
             return False
 
@@ -90,12 +103,4 @@ class SudokuMatrix:
         if value in self.get_box(row, column):
             return False
 
-        self.set(row, column, value)
         return True
-
-    def make_cell_empty(self, row, column):
-        self.set(row, column, self.EMPTY_CELL)
-
-    def increment_num_clues(self):
-        self.k += 1
-
